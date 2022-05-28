@@ -5,29 +5,43 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <time.h>
+#include <arpa/inet.h>
 
-int main(int argc, char **argv){
-  if(argc != 2){
-    printf("Usage: %s <port>\n", argv[0]);
-    exit(0);
-  }
 
-  int port = atoi(argv[1]);
-  printf("Port: %d\n", port);
+#define PORT 17
 
-  int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-  char response[30];
-  struct sockaddr_in server;
-  server.sin_family = AF_INET;
-  //server.sin_addr.s_addr = inet_addr("192.168.90.6");
-  server.sin_port = htons(13);
+ int main(int argc, char *argv[])
+{
+	int sockfd,newSocket, message,c;
+	struct sockaddr_in serverAddr;
+	char reply[30];
 
-  connect(sockfd, (struct sockaddr*)&server, sizeof(server));
-  printf("[+]Connected to the server\n");
+	char buffer[1024] = { 0 };
+	char clMsg[sizeof(buffer)];
 
-  recv(sockfd, response, 29, 0);
-  printf("Time from server: %s", response);
+	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	if(sockfd == -1)
+	{
+		printf("Unable to create socket. Try again");
+	}
 
-  return 0;
+	serverAddr.sin_family=AF_INET;
+	serverAddr.sin_port=htons(13);
+	serverAddr.sin_addr.s_addr=inet_addr("192.168.90.6");
+
+	if(connect(sockfd,(struct sockaddr *)&serverAddr, sizeof(serverAddr))<0)
+	{
+		puts("Connection Error");
+		return 1;
+	}
+	puts("Connected successfully! \n");
+
+	recv(sockfd, reply, 29, 0);
+	printf("Time received from server = %s", reply);
+
+	  
+	close(sockfd);
+
+	return 0;
 
 }
