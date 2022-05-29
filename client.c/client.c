@@ -34,7 +34,7 @@
 		puts("Connection Error");
 		return 1;
 	}
-	puts("Connected successfully! \n");
+	puts("Connection with server is success! \n");
 
 	recv(sockfd, reply, 29, 0);
 	printf("Time received from server = %s", reply);
